@@ -1,5 +1,4 @@
-from gtts import gTTS
-import pygame
+import pyttsx3
 import tkinter as tk
 from tkinter import messagebox, filedialog
 import os
@@ -22,6 +21,13 @@ class TextToSpeechApp:
         self.lang_menu = tk.OptionMenu(root, self.lang_var, 'en', 'ar', 'es', 'fr', 'de')
         self.lang_menu.pack(padx=10, pady=5)
 
+        self.speed_label = tk.Label(root, text="Select Speed:")
+        self.speed_label.pack(padx=10, pady=5)
+
+        self.speed_scale = tk.Scale(root, from_=50, to=200, orient='horizontal', label='Speed (%)', length=300)
+        self.speed_scale.set(100)
+        self.speed_scale.pack(padx=10, pady=5)
+
         self.convert_button = tk.Button(root, text="Convert to Speech", command=self.convert_text_to_speech)
         self.convert_button.pack(padx=10, pady=5)
 
@@ -34,25 +40,33 @@ class TextToSpeechApp:
         self.status_label = tk.Label(root, text="")
         self.status_label.pack(padx=10, pady=5)
 
+        # For handling preview audio files
+        self.preview_file = None
+        self.engine = pyttsx3.init()  # Initialize the pyttsx3 engine
+
     def convert_text_to_speech(self):
         text = self.text_entry.get("1.0", tk.END).strip()
         lang = self.lang_var.get()
+        speed = self.speed_scale.get()
 
         if not text:
             messagebox.showwarning("Input Error", "Please enter some text.")
             return
 
         try:
-            tts = gTTS(text=text, lang=lang)
+            # Set up the pyttsx3 engine properties
+            self.engine.setProperty('rate', speed)  # Set speech speed
+
             # Create a unique filename with timestamp
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             file_path = filedialog.asksaveasfilename(
-                defaultextension=".mp3",
-                filetypes=[("MP3 files", "*.mp3")],
-                initialfile=f"audio_{timestamp}.mp3"
+                defaultextension=".wav",
+                filetypes=[("WAV files", "*.wav")],
+                initialfile=f"audio_{timestamp}.wav"
             )
             if file_path:
-                tts.save(file_path)
+                self.engine.save_to_file(text, file_path)
+                self.engine.runAndWait()
                 self.status_label.config(text=f"Audio saved to {file_path}")
         except Exception as e:
             messagebox.showerror("Error", str(e))
@@ -60,33 +74,34 @@ class TextToSpeechApp:
     def preview_audio(self):
         text = self.text_entry.get("1.0", tk.END).strip()
         lang = self.lang_var.get()
+        speed = self.speed_scale.get()
 
         if not text:
             messagebox.showwarning("Input Error", "Please enter some text.")
             return
 
         try:
-            tts = gTTS(text=text, lang=lang)
-            audio_file = f"temp_preview_{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp3"
-            tts.save(audio_file)
+            if self.preview_file and os.path.exists(self.preview_file):
+                os.remove(self.preview_file)  # Remove old preview file if it exists
 
-            pygame.mixer.init()
-            pygame.mixer.music.load(audio_file)
-            pygame.mixer.music.play()
+            self.preview_file = f"temp_preview_{datetime.now().strftime('%Y%m%d_%H%M%S')}.wav"
+            
+            # Set up the pyttsx3 engine properties
+            self.engine.setProperty('rate', speed)  # Set speech speed
+            self.engine.save_to_file(text, self.preview_file)
+            self.engine.runAndWait()
 
-            while pygame.mixer.music.get_busy():
-                pygame.time.Clock().tick(10)
+            # Play the preview file
+            os.system(f"start {self.preview_file}")
 
-            # Ensure pygame stops playing before attempting to delete the file
-            pygame.mixer.music.stop()
-            pygame.mixer.quit()  # Clean up the pygame mixer
-            os.remove(audio_file)
+            # Ensure the file is removed after playback
+            os.remove(self.preview_file)
+            self.preview_file = None
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
-
     def show_help(self):
-        messagebox.showinfo("Help", "Enter text, select language, and click Convert to Speech or Preview.")
+        messagebox.showinfo("Help", "Enter text, select language, adjust speed, and click Convert to Speech or Preview.")
 
 if __name__ == "__main__":
     root = tk.Tk()
