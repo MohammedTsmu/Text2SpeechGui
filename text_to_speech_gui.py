@@ -23,13 +23,6 @@ class TextToSpeechApp:
         self.lang_menu = tk.OptionMenu(root, self.lang_var, 'en', 'ar', 'es', 'fr', 'de')
         self.lang_menu.pack(padx=10, pady=5)
 
-        self.speed_label = tk.Label(root, text="Select Speed:")
-        self.speed_label.pack(padx=10, pady=5)
-
-        self.speed_scale = tk.Scale(root, from_=50, to=200, orient='horizontal', label='Speed (%)', length=300)
-        self.speed_scale.set(100)
-        self.speed_scale.pack(padx=10, pady=5)
-
         self.convert_button = tk.Button(root, text="Convert to Speech", command=self.convert_text_to_speech)
         self.convert_button.pack(padx=10, pady=5)
 
@@ -47,11 +40,10 @@ class TextToSpeechApp:
 
         # Initialize pygame mixer for audio playback
         pygame.mixer.init()
-
+        
     def convert_text_to_speech(self):
         text = self.text_entry.get("1.0", tk.END).strip()
         lang = self.lang_var.get()
-        speed = self.speed_scale.get()
 
         if not text:
             messagebox.showwarning("Input Error", "Please enter some text.")
@@ -75,7 +67,6 @@ class TextToSpeechApp:
     def preview_audio(self):
         text = self.text_entry.get("1.0", tk.END).strip()
         lang = self.lang_var.get()
-        speed = self.speed_scale.get()
 
         if not text:
             messagebox.showwarning("Input Error", "Please enter some text.")
@@ -98,8 +89,10 @@ class TextToSpeechApp:
 
             # Ensure pygame stops playing before attempting to delete the file
             pygame.mixer.music.stop()
-            pygame.mixer.quit()  # Clean up the pygame mixer
-            time.sleep(0.1)  # Short delay to ensure cleanup
+            pygame.mixer.music.unload()  # Unload the file from mixer
+
+            # Wait a bit to ensure the file is released
+            time.sleep(0.5)
             if os.path.exists(self.preview_file):
                 os.remove(self.preview_file)
             self.preview_file = None
@@ -107,7 +100,7 @@ class TextToSpeechApp:
             messagebox.showerror("Error", str(e))
 
     def show_help(self):
-        messagebox.showinfo("Help", "Enter text, select language, adjust speed, and click Convert to Speech or Preview.")
+        messagebox.showinfo("Help", "Enter text, select language, and click Convert to Speech or Preview.")
 
 if __name__ == "__main__":
     root = tk.Tk()
