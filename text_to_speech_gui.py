@@ -1,8 +1,10 @@
-import pyttsx3
+from gtts import gTTS
+import pygame
 import tkinter as tk
 from tkinter import messagebox, filedialog
 import os
 from datetime import datetime
+import time
 
 class TextToSpeechApp:
     def __init__(self, root):
@@ -42,7 +44,9 @@ class TextToSpeechApp:
 
         # For handling preview audio files
         self.preview_file = None
-        self.engine = pyttsx3.init()  # Initialize the pyttsx3 engine
+
+        # Initialize pygame mixer for audio playback
+        pygame.mixer.init()
 
     def convert_text_to_speech(self):
         text = self.text_entry.get("1.0", tk.END).strip()
@@ -54,19 +58,16 @@ class TextToSpeechApp:
             return
 
         try:
-            # Set up the pyttsx3 engine properties
-            self.engine.setProperty('rate', speed)  # Set speech speed
-
-            # Create a unique filename with timestamp
+            tts = gTTS(text=text, lang=lang)
+            # Save the audio file
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             file_path = filedialog.asksaveasfilename(
-                defaultextension=".wav",
-                filetypes=[("WAV files", "*.wav")],
-                initialfile=f"audio_{timestamp}.wav"
+                defaultextension=".mp3",
+                filetypes=[("MP3 files", "*.mp3")],
+                initialfile=f"audio_{timestamp}.mp3"
             )
             if file_path:
-                self.engine.save_to_file(text, file_path)
-                self.engine.runAndWait()
+                tts.save(file_path)
                 self.status_label.config(text=f"Audio saved to {file_path}")
         except Exception as e:
             messagebox.showerror("Error", str(e))
@@ -84,18 +85,23 @@ class TextToSpeechApp:
             if self.preview_file and os.path.exists(self.preview_file):
                 os.remove(self.preview_file)  # Remove old preview file if it exists
 
-            self.preview_file = f"temp_preview_{datetime.now().strftime('%Y%m%d_%H%M%S')}.wav"
-            
-            # Set up the pyttsx3 engine properties
-            self.engine.setProperty('rate', speed)  # Set speech speed
-            self.engine.save_to_file(text, self.preview_file)
-            self.engine.runAndWait()
+            self.preview_file = f"temp_preview_{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp3"
+            tts = gTTS(text=text, lang=lang)
+            tts.save(self.preview_file)
 
-            # Play the preview file
-            os.system(f"start {self.preview_file}")
+            pygame.mixer.music.load(self.preview_file)
+            pygame.mixer.music.play()
 
-            # Ensure the file is removed after playback
-            os.remove(self.preview_file)
+            # Wait for the playback to finish
+            while pygame.mixer.music.get_busy():
+                pygame.time.Clock().tick(10)
+
+            # Ensure pygame stops playing before attempting to delete the file
+            pygame.mixer.music.stop()
+            pygame.mixer.quit()  # Clean up the pygame mixer
+            time.sleep(0.1)  # Short delay to ensure cleanup
+            if os.path.exists(self.preview_file):
+                os.remove(self.preview_file)
             self.preview_file = None
         except Exception as e:
             messagebox.showerror("Error", str(e))
