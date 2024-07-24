@@ -1,0 +1,44 @@
+ERROR:root:Error during text to speech conversion
+Traceback (most recent call last):
+  File "C:\Users\moham\OneDrive\Documents\projects\python\Text2SpeechGui\text_to_speech_gui.py", line 114, in convert_text_to_speech
+    self.info_label.config(text=detailed_info)
+  File "C:\Users\moham\AppData\Local\Programs\Python\Python312\Lib\tkinter\__init__.py", line 1721, in configure
+    return self._configure('configure', cnf, kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\moham\AppData\Local\Programs\Python\Python312\Lib\tkinter\__init__.py", line 1711, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+RuntimeError: main thread is not in main loop
+ERROR:root:Error during text to speech conversion
+Traceback (most recent call last):
+  File "C:\Users\moham\OneDrive\Documents\projects\python\Text2SpeechGui\text_to_speech_gui.py", line 150, in convert_text_to_speech
+    self.info_label.config(text=detailed_info)
+  File "C:\Users\moham\AppData\Local\Programs\Python\Python312\Lib\tkinter\__init__.py", line 1721, in configure
+    return self._configure('configure', cnf, kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\moham\AppData\Local\Programs\Python\Python312\Lib\tkinter\__init__.py", line 1711, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+RuntimeError: main thread is not in main loop
+ERROR:root:Error during text to speech conversion
+Traceback (most recent call last):
+  File "C:\Users\moham\OneDrive\Documents\projects\python\Text2SpeechGui\text_to_speech_gui.py", line 168, in convert_text_to_speech
+    self.status_label.config(text=f"\u062c\u0627\u0631\u064a \u0627\u0644\u062a\u062d\u0648\u064a\u0644: {i + 1}/{num_parts} - Converting: {i + 1}/{num_parts}")
+  File "C:\Users\moham\AppData\Local\Programs\Python\Python312\Lib\tkinter\__init__.py", line 1721, in configure
+    return self._configure('configure', cnf, kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\moham\AppData\Local\Programs\Python\Python312\Lib\tkinter\__init__.py", line 1711, in _configure
+    self.tk.call(_flatten((self._w, cmd)) + self._options(cnf))
+RuntimeError: main thread is not in main loop
+ERROR:root:Error during preview: [Errno 13] Permission denied: 'preview.mp3'
+ERROR:root:Error during preview: [Errno 13] Permission denied: 'preview.mp3'
+ERROR:root:Error during preview: [Errno 13] Permission denied: 'preview.mp3'
+ERROR:root:Error during preview: [Errno 13] Permission denied: 'preview.mp3'
+ERROR:root:Error during audio preview
+Traceback (most recent call last):
+  File "C:\Users\moham\OneDrive\Documents\projects\python\Text2SpeechGui\text_to_speech_gui.py", line 241, in preview_audio
+    if hasattr(self, 'preview_file') and os.path.exists(self.preview_file):
+                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: exists: path should be string, bytes, os.PathLike or integer, not NoneType
+ERROR:root:Error during preview: [Errno 13] Permission denied: 'preview.mp3'
+ERROR:root:\u062e\u0637\u0623: [WinError 32] The process cannot access the file because it is being used by another process: 'preview.mp3'
+ERROR:root:\u062e\u0637\u0623: [WinError 32] The process cannot access the file because it is being used by another process: 'preview.mp3'
+ERROR:root:\u062e\u0637\u0623: [WinError 32] The process cannot access the file because it is being used by another process: 'temp.mp3' -> 'C:/Users/moham/Desktop/output_20240724_221905.mp3'
